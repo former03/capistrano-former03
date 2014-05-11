@@ -1,18 +1,35 @@
-Capistrano with Rsync
+Capistrano extensions for FORMER 03
 =====================
 
-Capistrano with rsync to deployment hosts from local repository.
+Adds Features for Capistrano that are needed for FORMER 03's deployment
 
-[![Gem version](https://badge.fury.io/rb/capistrano-withrsync.png)][gem]
+Implemented features:
+--------------
+
+- Local git checkout should be deployed via rsync (to save bandwidth/time)
+-- saves bandwitdh and time
+-- be independent of git on remote hosts
+-- execute pre deployment tasks on controlled environment (e.g. sass compilation)
+- Support of git submodules
+- Support of destinations server without public key authentication
+- Deploy own static compiled versions of busybox and rsync if configured / needed
+- Relative symlinking (often needed if ssh or webapp is chrooted)
+
+(Planned) features:
+--------------
+
+- Current directory is no symlink (some hosting provider don't support wwwroot symlinked)
+
+[![Gem version](https://badge.fury.io/rb/capistrano-former03)][gem]
 
 [capistrano]: https://github.com/capistrano/capistrano
-[gem]: https://rubygems.org/gems/capistrano-withrsync
+[gem]: https://rubygems.org/gems/capistrano-former03
 
 Requirements
 ------------
 
 - Ruby >= 2.0
-- Capistrano >= 3.1
+- Capistrano == 3.2.1
 - Rsync >= 2.6
 
 Installation
@@ -21,7 +38,7 @@ Installation
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'capistrano-withrsync'
+gem 'capistrano-former03'
 ```
 
 And then execute:
@@ -33,7 +50,7 @@ $ bundle
 Or install it yourself as:
 
 ```sh
-$ gem install capistrano-withrsync
+$ gem install capistrano-former03
 ```
 
 Usage
@@ -42,7 +59,7 @@ Usage
 Capfile:
 
 ```ruby
-require 'capistrano/withrsync'
+require 'capistrano/former03'
 ```
 
 deploy as usual
@@ -56,11 +73,16 @@ Options
 
 Set capistrano variables with `set name, value`.
 
-Name          | Default                                                                    | Description
-    ------------- | --------                                                                   | ------------
-rsync_src     | tmp/deploy                                                                 | rsync src path
-rsync_dest    | shared/deploy                                                              | rsync dest path
-rsync_options | --recursive --delete --delete-excluded <br>--exclude .git* --exclude .svn* | rsync options
+Name               | Default            | Description
+-------------      | --------           | ------------
+local_stage        | tmp/deploy         | local stage path
+remote_stage       | shared/deploy      | remote stage path
+remote_bin         | shared/deploy_bin  | remote bin path
+rsync_options      | --archive --delete | rsync options
+deploy_busybox_bin | false              | deploy a static version of busybox
+deploy_rsync_bin   | nil (Autodetect)   | deploy a static version of rsync
+relative_symlinks  | true               | create all symlinks with relative
+
 
 Overview
 --------
@@ -93,6 +115,7 @@ Overview
 `-- shared
     |-- vendor
     |-- deploy (==> rsync dest)
+    |-- deploy_bin (==> static binaries)
     `-- log
 ```
 
@@ -109,9 +132,11 @@ Contributing
 Author
 ------
 
-- [linyows][linyows]
+- [linyows][linyows] (Author of capistrano-withrsync)
+- [simonswine][simonswine]
 
 [linyows]: https://github.com/linyows
+[simonswine]: https://github.com/linyows
 
 License
 -------
