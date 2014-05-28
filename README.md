@@ -14,11 +14,11 @@ Implemented features:
 - Support of destinations server without public key authentication
 - Deploy own static compiled versions of busybox and rsync if configured / needed
 - Relative symlinking (often needed if ssh or webapp is chrooted)
+- Current directory is no symlink (some hosting provider don't support wwwroot symlinked)
 
 (Planned) features:
 --------------
 
-- Current directory is no symlink (some hosting provider don't support wwwroot symlinked)
 
 [![Gem version](https://badge.fury.io/rb/capistrano-former03)][gem]
 
@@ -73,16 +73,16 @@ Options
 
 Set capistrano variables with `set name, value`.
 
-Name               | Default            | Description
--------------      | --------           | ------------
-local_stage        | tmp/deploy         | local stage path
-remote_stage       | shared/deploy      | remote stage path
-remote_bin         | shared/deploy_bin  | remote bin path
-rsync_options      | --archive --delete | rsync options
-deploy_busybox_bin | false              | deploy a static version of busybox
-deploy_rsync_bin   | nil (Autodetect)   | deploy a static version of rsync
-relative_symlinks  | true               | create all symlinks with relative
-
+Name                  | Default            | Description
+-------------         | --------           | ------------
+local_stage           | tmp/deploy         | local stage path
+remote_stage          | shared/deploy      | remote stage path
+remote_bin            | shared/deploy_bin  | remote bin path
+rsync_options         | --archive --delete | rsync options
+deploy_busybox_bin    | false              | deploy a static version of busybox
+deploy_rsync_bin      | nil (Autodetect)   | deploy a static version of rsync
+relative_symlinks     | true               | create all symlinks with relative
+current_path_real_dir | false              | move actual release to current_path to have a real directory instead of symlink 
 
 Overview
 --------

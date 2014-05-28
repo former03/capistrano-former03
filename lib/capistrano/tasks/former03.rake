@@ -51,9 +51,19 @@ namespace :former03 do
 
   desc 'Override symlink tasks'
   task :override_symlink do
-    #Filter execute with :ln, -s using Capistrano::Former03::Symlink 
-    SSHKit::Backend::Netssh.send(:define_method, :execute) do |*args|
-      _execute(*Capistrano::Former03::Symlink.execute(args)).success?
+    if fetch(:relative_symlinks)
+      #Filter execute with :ln, -s using Capistrano::Former03::Symlink
+      SSHKit::Backend::Netssh.send(:define_method, :execute) do |*args|
+        _execute(*Capistrano::Former03::Symlink.execute(args)).success?
+      end
+    end
+
+    # Move release to have a real dir as current path
+    if fetch(:current_path_real_dir)
+      Rake::Task[:'deploy:symlink:release'].clear
+      Rake::Task.define_task(:'deploy:symlink:release') do
+        invoke :'former03:remote:release_move'
+      end
     end
   end
 
@@ -217,6 +227,29 @@ namespace :former03 do
           :dest_path  => release_path,
         )
         execute(*rsync.command)
+      end
+    end
+
+    desc 'Move release to current instead of symlinking'
+    task :release_move do
+      on release_roles :all do
+        cp = current_path.join('current')
+        current_path = cp
+        current_version_path = current_path.to_s + ".version"
+
+        current_path_directory = test :test, '-d', current_path
+        current_version_exists = test :test, '-f', current_version_path
+
+        # check if current is a dir
+        if current_path_directory and current_version_exists
+          execute :mv, current_path, releases_path.join("`cat #{current_version_path}`")
+        else
+          execute :rm, '-rf', current_path
+        end
+
+        execute :mv, release_path, current_path
+        execute :echo, '-n', File.basename(release_path), '>', current_version_path
+
       end
     end
   end
