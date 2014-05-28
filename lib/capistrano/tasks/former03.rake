@@ -14,9 +14,10 @@ namespace :former03 do
   set :local_stage, 'tmp/deploy'
   set :remote_stage, 'shared/deploy'
   set :remote_bin, 'shared/deploy_bin'
-  set :deploy_rsync_bin, false
-  set :deploy_busybox_bin, nil
+  set :deploy_rsync_bin, nil
+  set :deploy_busybox_bin, false
   set :relative_symlinks, true
+  set :current_path_real_dir, false
 
   set :remote_stage_path, -> {
     Pathname.new(deploy_to).join(fetch(:remote_stage))
@@ -114,9 +115,13 @@ namespace :former03 do
 
       run_locally do
         # Bugfix for git versions < 1.9
-        execute(*git_submodule, :init)
-        execute(*git_submodule, :sync)
-        execute(*git_submodule, :update)
+          
+        # Check if .gitmodules exist
+        if test :test, '-e', '.gitmodules'
+          execute(*git_submodule, :init)
+          execute(*git_submodule, :sync)
+          execute(*git_submodule, :update)
+        end
 
         within fetch(:local_stage) do
           # Ensure correct checkout

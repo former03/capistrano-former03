@@ -59,7 +59,7 @@ module Capistrano
         # No remote site
         return [] if role.nil?
 
-        # Handle passsword 
+        # Handle passsword
         if not password.nil?
           ssh_options += [
             :sshpass,
@@ -73,14 +73,14 @@ module Capistrano
 
         if not role.port.nil?
           ssh_options += ['ssh'] if ssh_options.length == 0
-          ssh_options += ['-p', role.port] 
-        end 
+          ssh_options += ['-p', role.port]
+        end
 
         # Add options
-        options += [ssh_options.join(' ')] if ssh_options.length > 0
-        
+        options += ['-e', "\"#{ssh_options.join(' ')}\""] if ssh_options.length > 0
+
         # Add rsync path if needed
-        rsync_path = fetch(:deploy_rsync_path)
+        rsync_path = role.properties.fetch(:deploy_rsync_path)
         if not rsync_path.nil?
           options += ['--rsync-path', rsync_path]
         end
