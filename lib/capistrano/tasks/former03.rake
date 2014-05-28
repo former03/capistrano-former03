@@ -100,8 +100,14 @@ namespace :former03 do
     task :stage => :mkdir_stage do
 
       git_prefix = [:git, '--git-dir', fetch(:repo_path), '--work-tree',fetch(:local_stage_path)]
+      git_submodule = [:git, :submodule]
 
       run_locally do
+        # Bugfix for git versions < 1.9
+        execute(*git_submodule, :init)
+        execute(*git_submodule, :sync)
+        execute(*git_submodule, :update)
+
         within fetch(:local_stage) do
           # Ensure correct checkout
           execute(*git_prefix, :reset, '--hard')
