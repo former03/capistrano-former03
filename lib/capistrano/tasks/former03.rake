@@ -19,6 +19,10 @@ namespace :former03 do
   set :relative_symlinks, true
   set :current_path_real_dir, false
 
+  set :ensure_file_mode, nil
+  set :ensure_dir_mode, nil
+  set :ensure_path_mode, {}
+
   set :remote_stage_path, -> {
     Pathname.new(deploy_to).join(fetch(:remote_stage))
   }
@@ -146,6 +150,25 @@ namespace :former03 do
         end
       end
     end
+    desc 'Fix file/dir rights on local stage'
+    task :fix_rights => :stage do
+      run_locally do
+        within fetch(:local_stage_path) do
+          # fix files
+          if fetch(:ensure_file_mode)
+            execute :find, '.', '-type', :f, '-print0', '|', :xargs, '-0', :chmod, fetch(:ensure_file_mode)
+          end
+          # fix directories
+          if fetch(:ensure_dir_mode)
+            execute :find, '.', '-type', :d, '-print0', '|', :xargs, '-0', :chmod, fetch(:ensure_dir_mode)
+          end
+          # fix special paths
+          fetch(:ensure_path_mode).each do |path,mode|
+            execute :chmod, mode, path
+          end
+        end
+      end
+    end
   end
 
   namespace :remote do
@@ -210,7 +233,7 @@ namespace :former03 do
     end
 
     desc 'Sync to deployment hosts from local'
-    task :sync =>  [:check, 'former03:local:stage'] do
+    task :sync =>  [:check, 'former03:local:fix_rights'] do
       roles(:all).each do |role|
         rsync = Capistrano::Former03::Rsync.new(
           :src_path   => fetch(:local_stage_path),
