@@ -3,6 +3,11 @@ Capistrano extensions for FORMER 03
 
 Adds Features for Capistrano that are needed for FORMER 03's deployment
 
+[![Gem version](https://badge.fury.io/rb/capistrano-former03.png)][gem]
+
+[capistrano]: https://github.com/capistrano/capistrano
+[gem]: https://rubygems.org/gems/capistrano-former03
+
 Implemented features:
 --------------
 
@@ -15,15 +20,13 @@ Implemented features:
 - Deploy own static compiled versions of busybox and rsync if configured / needed
 - Relative symlinking (often needed if ssh or webapp is chrooted)
 - Current directory is no symlink (some hosting provider don't support wwwroot symlinked)
+- Fix rights at local_stage
 
 (Planned) features:
 --------------
 
+-?
 
-[![Gem version](https://badge.fury.io/rb/capistrano-former03)][gem]
-
-[capistrano]: https://github.com/capistrano/capistrano
-[gem]: https://rubygems.org/gems/capistrano-former03
 
 Requirements
 ------------
@@ -83,6 +86,9 @@ deploy_busybox_bin    | false              | deploy a static version of busybox
 deploy_rsync_bin      | nil (Autodetect)   | deploy a static version of rsync
 relative_symlinks     | true               | create all symlinks with relative
 current_path_real_dir | false              | move actual release to current_path to have a real directory instead of symlink 
+ensure_file_mode      | nil                | If given all files are chmoded to that mode
+ensure_dir_mode       | nil                | If given all directories are chmoded to that mode
+ensure_path_mode      | {}                 | Dictionary with path => mode mapping for special files/directories
 
 Overview
 --------
@@ -136,7 +142,7 @@ Author
 - [simonswine][simonswine]
 
 [linyows]: https://github.com/linyows
-[simonswine]: https://github.com/linyows
+[simonswine]: https://github.com/simonswine
 
 License
 -------
