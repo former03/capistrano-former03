@@ -88,9 +88,6 @@ namespace :former03 do
     desc 'Create the local staging directory'
     task :mkdir_stage => :check do
 
-      # Get full path of local stage
-      set :local_stage_path, Pathname.pwd.join(fetch(:local_stage))
-
       # if already exits finish task
       next if File.directory? fetch(:local_stage)
 
@@ -118,10 +115,9 @@ namespace :former03 do
       git_submodule = [:git, :submodule]
 
       run_locally do
-        # Bugfix for git versions < 1.9
-          
         # Check if .gitmodules exist
         if test :test, '-e', '.gitmodules'
+          # Bugfix for git versions < 1.9
           execute(*git_submodule, :init)
           execute(*git_submodule, :sync)
           execute(*git_submodule, :update)
@@ -138,7 +134,7 @@ namespace :former03 do
           if test :test, '-e', '.gitmodules'
             # check out all submodules
             git_submodule = git_prefix + [:submodule]
-            git_submodule_foreach = git_submodule + [:foreach,:git]
+            git_submodule_foreach = git_submodule + [:foreach, :git, '--work-tree', '.']
             execute(*git_submodule, :init)
             execute(*git_submodule, :sync)
             execute(*git_submodule, :update)
