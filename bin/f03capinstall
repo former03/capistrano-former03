@@ -1,0 +1,3 @@
+#!/usr/bin/env ruby
+require 'capistrano/former03/install'
+Capistrano::Former03::Install.new.run

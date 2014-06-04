@@ -1,0 +1,38 @@
+# ensure this version of capistrano is used
+lock '<%= Capistrano::VERSION %>'
+
+set :application, '<MY_APP_NAME>'
+
+# Link files into deploy destination
+# set :linked_files, ['wwwroot/config.inc.php']
+
+# Link directories into deploy destination
+# set :linked_dirs, ['wwwroot/typo3temp']
+
+# Default value for keep_releases is 5
+# set :keep_releases, 5
+
+# Ensure rights for all files/dirs
+# set :ensure_file_mode, '644'
+# set :ensure_dir_mode, '755'
+
+# Special rights for single files
+#set :ensure_path_mode, {
+#  'wwwroot/secret.conf'         => '400',
+#  'wwwroot/public_writable_dir' => '777',
+#}
+
+# Execute custom task after local stage (example default task)
+=begin
+namespace :custom do
+  desc 'Run rakefile'
+  task :rakefile do
+    run_locally do
+      within fetch(:local_stage_path) do
+        execute 'bundle exec rake'
+      end
+    end
+  end
+end
+after 'former03:local:stage', 'custom:rakefile'
+=end

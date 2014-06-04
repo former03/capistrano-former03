@@ -1,0 +1,27 @@
+# Force deployment of busybox for standard commadns
+#set :deploy_busybox_bin, true
+
+# Force deployment of own rsync binary
+#set :deploy_rsync_bin, true
+
+# Move current dir to current/current, workaround for symlink problems
+#set :current_path_real_dir, true
+
+# Example for password authentication (you probably want to use public keys)
+=begin
+set :ssh_options, {
+    :forward_agent => false,
+    :auth_methods  => %w(password),
+    :password      => '<passw0rd>',
+}
+=end
+
+# Destination directory for deployment
+set :deploy_to, '<DESTDIR>'
+
+# Configure remote server
+server '<DNSNAME>',
+    roles: %w{web},
+    user: '<USER>'
+
+
