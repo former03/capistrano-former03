@@ -76,7 +76,7 @@ namespace :former03 do
     desc 'Check that the repository is reachable'
     task :check do
       run_locally do
-        git_dir = Pathname.new(capture :git, 'rev-parse', '--git-dir')
+        git_dir = Pathname.new((capture :git, 'rev-parse', '--git-dir').chomp)
         if not git_dir.absolute?
           git_dir = Pathname.pwd.join(git_dir)
         end
