@@ -22,6 +22,42 @@ set :application, '<MY_APP_NAME>'
 #  'wwwroot/public_writable_dir' => '777',
 #}
 
+# Set mysql connnections settings
+#set :mysql_connections, {
+#    :production => {
+#        :host     => 'host1',
+#        :port     => 3306,
+#        :database => 'dbname',
+#        :username => 'user1',
+#        :password => 'password',
+#    },
+#    :staging => {
+#        :host     => 'host1',
+#        :port     => 3306,
+#        :database => 'dbname',
+#        :username => 'user1',
+#        :password => 'password',
+#    },
+#}
+
+# Create files from database settings
+#set :mysql_templates, [
+#    {
+#        :destination => 'wwwroot/wp-database.php',
+#        :template    => 'config/wp-database.php.erb',
+#    }
+#]
+# Enable mysql templates
+#before 'former03:local:fix_rights', 'former03:mysql:templates'
+
+# Create mysqldump before deploy
+#before 'former03:remote:release', 'former03:mysql:backup'
+
+## Sync database from production
+## * works in non production stages only
+## * performs mysqldump backup
+#before 'former03:remote:release', 'former03:mysql:sync'
+
 # Execute custom task after local stage (example default task)
 =begin
 namespace :custom do

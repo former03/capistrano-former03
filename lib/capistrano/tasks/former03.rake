@@ -19,6 +19,9 @@ namespace :former03 do
   set :relative_symlinks, true
   set :current_path_real_dir, false
 
+  set :mysql_connections, {}
+  set :mysql_templates, []
+
   set :ensure_file_mode, nil
   set :ensure_dir_mode, nil
   set :ensure_path_mode, {}
@@ -275,6 +278,27 @@ namespace :former03 do
         execute :echo, '-n', File.basename(release_path), '>', current_version_path
 
       end
+    end
+  end
+
+  namespace :mysql do
+    task :prepare do
+      @mysql ||= Capistrano::Former03::MySQL.new
+    end
+
+    desc 'Sync production database to my stage'
+    task :sync => [:backup, :prepare] do
+      @mysql.sync(self)
+    end
+
+    desc 'Create a mysqldump of the remote databases'
+    task :backup => :prepare do
+      @mysql.backup(self)
+    end
+
+    desc 'Create mysql files from templates'
+    task :templates => :prepare do
+      @mysql.templates(self)
     end
   end
 end
